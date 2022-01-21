@@ -1,3 +1,3 @@
 # Bus realtime monitor
 
-![example](image/bus-realtime-monitor.png)
+![example](image/bus-realtime-monitor.gif)
