@@ -1,0 +1,44 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Bus map</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'bus/css/style.css' %}">
+
+    <link rel="stylesheet" href="{% static 'bus/css/leaflet/leaflet.css' %}">
+    <script src="{% static 'bus/js/leaflet.js' %}"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <aside>
+          <h2>
+              Eventos
+          </h2>
+        <ul id='control-buses'>
+        </ul>
+      </aside>
+      <main>
+        <div id='map'>
+        </div>
+      </main>
+    </div>
+
+    <script>
+        var mapTileLayer = '{{ OSM_TILE_LAYER }}'
+        var mapAttribution = '{{ OSM_ATTRIBUTION }}'
+
+        /* Credit: Maps Icons Collection https://mapicons.mapsmarker.com */
+        var iconUrl = `{% static 'bus/image/marker-icon.png' %}`
+    </script>
+    <script src="{% static 'bus/js/map.js' %}"></script>
+  </body>
+</html>

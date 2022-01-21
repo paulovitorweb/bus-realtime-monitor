@@ -1,0 +1,86 @@
+{% load static %}
+
+<!DOCTYPE html>
+<htl>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Room</title>
+    <script src="{% static 'bus/js/turf.js' %}"></script>
+    <script src="{% static 'bus/data/vectors.js' %}"></script>
+</head>
+<body>
+    <script>
+        // Config
+        const NUMBER_OF_BUSES = 10
+        const INTERVAL_IN_MILISECONDS = 500
+        const RANGE_METERS = {
+            min: 100,
+            max: 150
+        }
+        const RANGE_BUS_ID = {
+            min: 1000,
+            max: 9999
+        }
+
+        // Utils
+        let range = n => Array.from(Array(n).keys())
+        let randomUntil = n => Math.floor(Math.random() * n)
+        let randomBetween = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
+
+        function chooseVector() {
+            const vector = vectors[randomUntil(4)]
+            const lineString = vector.geometry.coordinates
+            return turf.lineString(lineString)
+        }
+
+        function calculateDisplacement(fromMeters) {
+            return randomBetween(RANGE_METERS.min, RANGE_METERS.max) + fromMeters
+        }
+
+        let lines = []
+
+        for (let i of range(NUMBER_OF_BUSES)) {
+            lines.push({
+                busId: randomBetween(RANGE_BUS_ID.min, RANGE_BUS_ID.max),
+                vector: chooseVector(),
+                meters: 1
+            })
+        }
+
+        const positionSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/bus/'
+        )
+
+        function sendPositions() {
+            setTimeout(function() {
+                const line = lines[randomUntil(NUMBER_OF_BUSES)]
+
+                const meters = calculateDisplacement(line.meters)
+                line.meters = meters
+
+                const displacementInVector = turf.along(line.vector, meters, {units: 'meters'})
+
+                const [longitude, latitude] = turf.getCoords(displacementInVector)
+
+                const message = {
+                    type: "location_update",
+                    latitude: latitude,
+                    longitude: longitude,
+                    bus_id: line.busId
+                };
+
+                console.log(message)
+
+                positionSocket.send(JSON.stringify(message));
+
+                sendPositions();
+            }, INTERVAL_IN_MILISECONDS)
+        }
+
+        sendPositions();
+
+    </script>
+</body>
+</html>

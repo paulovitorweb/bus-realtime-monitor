@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  postgis:
+    container_name: postgis
+    image: postgis/postgis
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis:5.0.5
+    container_name: redis
+    ports:
+      - '6379:6379'
